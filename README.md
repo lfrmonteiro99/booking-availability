@@ -22,7 +22,7 @@ A modern Vue 3 application for visualizing and managing room availability, desig
 
 ## Features
 
-- **Interactive Calendar**: View and manage room availability by day, week, or month.
+- **Interactive Calendar**: View and manage room availability by day, week, or month. (Powered by [FullCalendar](https://fullcalendar.io/) / [vue-cal](https://antoniandre.github.io/vue-cal/) or your chosen package)
 - **Filter & Search**: Filter by property, room, date range, and guest count.
 - **API Token Authentication**: Secure requests to the backend using a Bearer token.
 - **Real-time Updates**: Reflects changes in availability instantly.
@@ -46,6 +46,12 @@ npm install
 # or
 yarn install
 ```
+
+### Calendar Package
+
+This project uses a calendar component for the main availability view. Example:
+
+- [FullCalendar](https://fullcalendar.io/)
 
 ---
 
@@ -124,6 +130,33 @@ GET /availability?property_id=property-123&check_in=2024-07-01&check_out=2024-07
 }
 ```
 
+## API Authentication
+Most endpoints require authentication via a Bearer token (Laravel Sanctum). You can obtain a token by:
+- Using the fixed token created by the migration (see migration file for the value).
+- Registering a user via `/api/register` and then logging in via `/api/login` to receive a token. (e.g. postman)
+
+### How to Get an API Token
+
+**Register and Log In (for real users)**
+1. Register a new user:
+   ```bash
+   curl -X POST http://localhost:8080/api/register \
+     -H "Content-Type: application/json" \
+     -d '{"name": "Your Name", "email": "your@email.com", "password": "yourpassword", "password_confirmation": "yourpassword"}'
+   ```
+2. Log in to get a token:
+   ```bash
+   curl -X POST http://localhost:8080/api/login \
+     -H "Content-Type: application/json" \
+     -d '{"email": "your@email.com", "password": "yourpassword"}'
+   ```
+   The response will include an `access_token`
+
+Include the token in the `Authorization` header:
+```
+Authorization: Bearer <your_token>
+```
+
 ---
 
 ## Development
@@ -139,14 +172,9 @@ GET /availability?property_id=property-123&check_in=2024-07-01&check_out=2024-07
 availability-app/
 ├── public/
 ├── src/
-│   ├── api/                # API utilities
 │   ├── components/         # Vue components (e.g., AvailabilityCalendar.vue)
-│   ├── store/              # Pinia stores or Vuex (if used)
-│   ├── views/              # Page-level components
 │   ├── App.vue
 │   └── main.js
-├── tests/
-├── .env.example
 ├── package.json
 └── vite.config.js
 ```
